@@ -5,19 +5,19 @@ import * as jsYaml from 'js-yaml';
 export const useObjectStateStore = defineStore('objectstate', {
     state: () => {
         const schemaText = ref(_schemaText)
-        const currentObject = {
+        const currentObject = ref({
             wrangling: [{ name: 'nop' }],
             analysis: [{ name: 'nop' }],
             visualization: [{ name: 'nop' }]
-        }
+        })
 
         return {
             schemaText,
             currentObject
         }
     },
-    getters: () => {
-        objectMarkdown: (state) => '\`\`\`yaml\n${jsYaml.dump(state.templateConfig)}\n\`\`\`'
+    getters: {
+        currentObjectMarkdown: (state) => `\`\`\`yaml\n${jsYaml.dump(state.currentObject)}\n\`\`\``
     }
 });
 

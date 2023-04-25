@@ -10,17 +10,15 @@ export default {
         const objectStateStore = useObjectStateStore()
 
         return {
-            objectStateStore,
-            md: objectStateStore.getters.objectMarkdown
+            objectStateStore
         }
     }
 }
-
 </script>
 
 <template>
     <div id="object-state-wrapper" class="hljs">
-        <Markdown :source="md" />
+        <Markdown :source="objectStateStore.currentObjectMarkdown" />
     </div>
 </template>
 

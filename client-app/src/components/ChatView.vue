@@ -1,27 +1,30 @@
 <script>
 import { useChatStore } from '@/stores/ChatStore'
 import { useViewSharedStore } from '@/stores/ViewSharedStore'
-import { onMounted } from 'vue'
+import { useControllerStore } from '@/stores/ControllerStore'
+import { ref, onMounted } from 'vue'
 
 export default {
     setup() {
         const chatStore = useChatStore()
         const viewSharedStore = useViewSharedStore()
+        const controllerStore = useControllerStore()
+        const chatMessages = ref()
 
-        const msgEntered = (event) => {
+        const msgEntered = async (event) => {
             viewSharedStore.disableInput = true
             let msg = event.target.value.trim()
             if (msg.length > 0) {
-                let newPrompt = { role: 'user', content: msg }
-                chatStore.visibleChat.push(newPrompt)
+                await controllerStore.prompt(msg, 'user');
+                if (chatMessages.value)
+                    chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
             }
             event.target.value = ''
-            viewSharedStore.disableInput = false
             return;
         }
 
         onMounted(() => {
-            viewSharedStore.disableInput = false
+            controllerStore.initChat()
         })
 
         return {
@@ -35,7 +38,7 @@ export default {
 
 <template>
     <div id="chat-wrapper">
-        <div id="chat-messages">
+        <div ref="chatMessages" id="chat-messages">
             <div v-for="entry in chatStore.visibleChat"
                 :class="{ 'chat-line user-line': entry.role == 'user', 'chat-line assistant-line': entry.role == 'assistant' }">
                 {{ entry.content }}
