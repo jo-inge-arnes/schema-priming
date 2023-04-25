@@ -11,7 +11,8 @@ export const useControllerStore = defineStore('controller', {
         const apiKey = ref(import.meta.env.VITE_OPENAI_API_KEY)
         const orgId = ref(import.meta.env.VITE_OPENAI_ORG_ID)
         const temp = ref(0.05)
-        const version = ref('gpt-3.5-turbo')
+        // const version = ref('gpt-3.5-turbo')
+        const version = ref('gpt-4')
         const gptHttp = ref(new GptHttp(apiKey.value, orgId.value, version.value, temp.value))
 
         return {
@@ -31,8 +32,33 @@ export const useControllerStore = defineStore('controller', {
             viewSharedState.disableInput = true;
 
             let promptObj = { role: 'user', content: newPrompt }
-            chatStore.rawChat.push(promptObj)
             chatStore.visibleChat.push(promptObj)
+
+            // Here words that can bypass the rules could be removed
+            // promptObj.content.replace(/please/ig, ' ')
+
+            chatStore.rawChat.push(promptObj)
+
+            // If the total length of the conversation array is longer than 7, then
+            // keep the only the second message and the last five messages. This is to
+            // reduce the number of tokens in the ChatGPT request. There is no reason why
+            // older messages should be included in the request in our use case. The
+            // first message is a system message that will be updated, so we remove that.
+            if (chatStore.rawChat.length > 7) {
+                let systemMessageText = chatStore.getSystemMessageText(
+                    objectStateStore.schemaText,
+                    objectStateStore.currentObject
+                );
+                let systemMessageObj = { role: 'system', content: systemMessageText }
+                let truncatedConversation = [systemMessageObj];
+                truncatedConversation = truncatedConversation.concat(
+                    chatStore.rawChat.slice(1, 2));
+                truncatedConversation = truncatedConversation.concat(
+                    chatStore.rawChat.slice(-5));
+                let originalLen = chatStore.rawChat.length
+                Array.prototype.push.apply(chatStore.rawChat, truncatedConversation);
+                chatStore.rawChat.splice(0, originalLen);
+            }
 
             this.gptHttp.post(chatStore.rawChat).then(function (response) {
                 let completion = response.data.choices[0].message.content;

@@ -3,8 +3,12 @@ import { useChatStore } from '@/stores/ChatStore'
 import { useViewSharedStore } from '@/stores/ViewSharedStore'
 import { useControllerStore } from '@/stores/ControllerStore'
 import { ref, onMounted } from 'vue'
+import Markdown from 'vue3-markdown-it';
 
 export default {
+    components: {
+        Markdown
+    },
     setup() {
         const chatStore = useChatStore()
         const viewSharedStore = useViewSharedStore()
@@ -41,8 +45,8 @@ export default {
         <div ref="chatMessages" id="chat-messages">
             <div v-for="entry in chatStore.visibleChat"
                 :class="{ 'chat-line user-line': entry.role == 'user', 'chat-line assistant-line': entry.role == 'assistant' }">
-                {{ entry.content }}
-            </div>
+                <Markdown :source="entry.content" />
+        </div>
         </div>
         <div id="chat-input-container">
             <input type="text" id="chat-input" @keypress.enter="msgEntered" :disabled="viewSharedStore.disableInput"
