@@ -3,18 +3,18 @@ import { useChatStore } from '@/stores/ChatStore'
 import { useViewSharedStore } from '@/stores/ViewSharedStore'
 import { useControllerStore } from '@/stores/ControllerStore'
 import { ref, nextTick, onMounted } from 'vue'
-import Markdown from 'vue3-markdown-it';
+import Markdown from 'vue3-markdown-it'
 
 export default {
     components: {
         Markdown
     },
     setup() {
-        const chatStore = useChatStore();
-        const viewSharedStore = useViewSharedStore();
-        const controllerStore = useControllerStore();
-        const chatMessages = ref(null);
-        const chatInput = ref(null);
+        const chatStore = useChatStore()
+        const viewSharedStore = useViewSharedStore()
+        const controllerStore = useControllerStore()
+        const chatMessages = ref(null)
+        const chatInput = ref(null)
 
         const msgEntered = async (event) => {
             let msg = chatInput.value.value.trim()
