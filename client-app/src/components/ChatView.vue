@@ -13,17 +13,19 @@ export default {
         const chatStore = useChatStore()
         const viewSharedStore = useViewSharedStore()
         const controllerStore = useControllerStore()
-        const chatMessages = ref()
+        const chatMessages = ref(null)
+        const chatInput = ref(null)
 
         const msgEntered = async (event) => {
-            viewSharedStore.disableInput = true
-            let msg = event.target.value.trim()
+            let msg = chatInput.value.value.trim()
             if (msg.length > 0) {
+                viewSharedStore.disableInput = true
                 await controllerStore.prompt(msg, 'user');
                 if (chatMessages.value)
                     chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
             }
-            event.target.value = ''
+            chatInput.value.value = ''
+            chatInput.value.focus()
             return;
         }
 
@@ -34,6 +36,8 @@ export default {
         return {
             chatStore,
             viewSharedStore,
+            chatMessages,
+            chatInput,
             msgEntered
         }
     }
@@ -46,10 +50,10 @@ export default {
             <div v-for="entry in chatStore.visibleChat"
                 :class="{ 'chat-line user-line': entry.role == 'user', 'chat-line assistant-line': entry.role == 'assistant' }">
                 <Markdown :source="entry.content" />
-        </div>
+            </div>
         </div>
         <div id="chat-input-container">
-            <input type="text" id="chat-input" @keypress.enter="msgEntered" :disabled="viewSharedStore.disableInput"
+            <input type="text" id="chat-input" ref="chatInput" @keypress.enter="msgEntered" :disabled="viewSharedStore.disableInput"
                 placeholder="Type your message..." autocomplete="off" />
         </div>
     </div>

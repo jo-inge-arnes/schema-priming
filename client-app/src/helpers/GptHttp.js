@@ -1,11 +1,12 @@
 import axios from 'axios';
 
 export class GptHttp {
-    constructor(apiKey, orgId, version, temp) {
+    constructor(apiKey, orgId, version, temp, top_p) {
         this.apiKey = apiKey;
         this.orgId = orgId;
         this.version = version;
         this.temp = temp;
+        this.top_p = top_p;
         this.baseUrl = 'https://api.openai.com/v1/chat';
         this.headers = {
           'Content-Type': 'application/json',
@@ -22,7 +23,8 @@ export class GptHttp {
         return this.httpChat.post('/completions', {
             model: this.version,
             messages: chatLines,
-            temperature: this.temp
+            temperature: this.temp,
+            top_p: this.top_p
           });
     }
 }

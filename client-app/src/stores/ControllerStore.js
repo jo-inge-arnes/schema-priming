@@ -10,15 +10,17 @@ export const useControllerStore = defineStore('controller', {
     state: () => {
         const apiKey = ref(import.meta.env.VITE_OPENAI_API_KEY)
         const orgId = ref(import.meta.env.VITE_OPENAI_ORG_ID)
-        const temp = ref(import.meta.env.VITE_OPENAI_TEMP)
+        const temp = ref(parseFloat(import.meta.env.VITE_OPENAI_TEMP))
+        const top_p = ref(parseFloat(import.meta.env.VITE_OPENAI_TOP_P))
         const version = ref(import.meta.env.VITE_OPENAI_MODEL_VERSION)
-        const gptHttp = ref(new GptHttp(apiKey.value, orgId.value, version.value, temp.value))
+        const gptHttp = ref(new GptHttp(apiKey.value, orgId.value, version.value, temp.value, top_p.value))
 
         return {
             gptHttp,
             apiKey,
             orgId,
             temp,
+            top_p,
             version
         }
     },
