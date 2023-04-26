@@ -61,7 +61,7 @@ export const useControllerStore = defineStore('controller', {
                 chatStore.rawChat.splice(0, originalLen);
             }
 
-            this.gptHttp.post(chatStore.rawChat).then(function (response) {
+            return this.gptHttp.post(chatStore.rawChat).then(function (response) {
                 let completion = response.data.choices[0].message.content;
                 let newAssistEntry = {
                     role: 'assistant',

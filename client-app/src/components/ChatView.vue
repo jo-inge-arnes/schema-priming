@@ -2,7 +2,7 @@
 import { useChatStore } from '@/stores/ChatStore'
 import { useViewSharedStore } from '@/stores/ViewSharedStore'
 import { useControllerStore } from '@/stores/ControllerStore'
-import { ref, onMounted } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import Markdown from 'vue3-markdown-it';
 
 export default {
@@ -10,23 +10,29 @@ export default {
         Markdown
     },
     setup() {
-        const chatStore = useChatStore()
-        const viewSharedStore = useViewSharedStore()
-        const controllerStore = useControllerStore()
-        const chatMessages = ref(null)
-        const chatInput = ref(null)
+        const chatStore = useChatStore();
+        const viewSharedStore = useViewSharedStore();
+        const controllerStore = useControllerStore();
+        const chatMessages = ref(null);
+        const chatInput = ref(null);
 
         const msgEntered = async (event) => {
             let msg = chatInput.value.value.trim()
-            if (msg.length > 0) {
-                viewSharedStore.disableInput = true
-                await controllerStore.prompt(msg, 'user');
-                if (chatMessages.value)
-                    chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
-            }
             chatInput.value.value = ''
+
+            if (msg.length > 0) {
+                viewSharedStore.disableInput = true;
+                await controllerStore.prompt(msg, 'user')
+                await nextTick()
+            }
+
+            if (chatMessages.value) {
+                chatMessages.value.scrollTop = chatMessages.value.scrollHeight
+            }
+
             chatInput.value.focus()
-            return;
+
+            return
         }
 
         onMounted(() => {
@@ -39,7 +45,7 @@ export default {
             chatMessages,
             chatInput,
             msgEntered
-        }
+        };
     }
 }
 </script>
@@ -53,8 +59,8 @@ export default {
             </div>
         </div>
         <div id="chat-input-container">
-            <input type="text" id="chat-input" ref="chatInput" @keypress.enter="msgEntered" :disabled="viewSharedStore.disableInput"
-                placeholder="Type your message..." autocomplete="off" />
+            <input type="text" id="chat-input" ref="chatInput" @keypress.enter="msgEntered"
+                :disabled="viewSharedStore.disableInput" placeholder="Type your message..." autocomplete="off" />
         </div>
     </div>
 </template>
