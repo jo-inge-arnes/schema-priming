@@ -7,5 +7,5 @@ Note that the system message prompt has been altered to perform better on GPT-3.
 
 The client application is written in VUE 3, and is located under
 *[client app](client-app/)*. Please read the *[README](client-app/README.md)*
-for instrucitons.
+for instructions.
 
