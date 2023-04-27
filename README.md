@@ -5,7 +5,8 @@ Compliance*, currently available as a [preprint](https://).
 
 Note that the system message prompt has been altered to perform better on GPT-3.5 Turbo compared to message listed the preprint. This is one of the changes that will be made to the final version of the paper.
 
-To run, start the backend and the client servers.
+## Running the project
+Follow the instructions below, and make sure to start both the backend and the client server.
 
 ## Backend
 The backend is written in Python using Flask, and is located under *[backend](backend/)*. To start the server:
