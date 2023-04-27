@@ -23,6 +23,13 @@ export default {
             if (msg.length > 0) {
                 viewSharedStore.disableInput = true;
                 await controllerStore.prompt(msg)
+
+                if (chatStore.completionErrorMessage !== '') {
+                    let msg = chatStore.completionErrorMessage
+                    chatStore.completionErrorMessage = ''
+                    await controllerStore.prompt(msg)
+                }
+
                 await controllerStore.validate()
                 await nextTick()
             }

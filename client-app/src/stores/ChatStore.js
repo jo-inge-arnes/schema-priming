@@ -6,7 +6,8 @@ export const useChatStore = defineStore('chat', {
     state: () => {
         const visibleChat = ref([])
         const rawChat = ref([])
-        return { visibleChat, rawChat }
+        const completionErrorMessage = ref('')
+        return { visibleChat, rawChat, completionErrorMessage }
     },
     actions: {
         getSystemMessageText(schemaText, currentObject) {

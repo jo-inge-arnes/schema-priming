@@ -35,7 +35,7 @@ export const useControllerStore = defineStore('controller', {
             return this.backendHttp.validate(objectStateStore.currentObject).then(function (response) {
                 if (!response.data.success) {
                     that.prompt(
-                        `The YAML did not validate, please correct the mistake or roll back the update!\n${response.data.msg}`)
+                        `The YAML did not validate, either correct the mistake or roll back the update! Here is the error message:\n\n${response.data.msg}`)
                 }
             }).catch(function (err) {
                 console.error(err);
@@ -48,13 +48,18 @@ export const useControllerStore = defineStore('controller', {
 
             viewSharedState.disableInput = true;
 
-            let promptObj = { role: 'user', content: newPrompt }
-            chatStore.visibleChat.push(promptObj)
+            let visibleNewPrompt = newPrompt
+            
+            if (visibleNewPrompt.startsWith('The YAML did not validate')) {
+                visibleNewPrompt = '*(The assistant made a mistake)*'
+            }
+
+            chatStore.visibleChat.push({ role: 'user', content: visibleNewPrompt })
 
             // Here words that can bypass the rules could be removed
             // promptObj.content.replace(/please/ig, ' ')
 
-            chatStore.rawChat.push(promptObj)
+            chatStore.rawChat.push({ role: 'user', content: newPrompt })
 
             // If the total length of the conversation array is longer than 7, then
             // keep the only the second message and the last five messages. This is to
@@ -91,10 +96,8 @@ export const useControllerStore = defineStore('controller', {
                     try {
                         objectStateStore.currentObject = jsYaml.load(yamlMatches[1]);
                     } catch (err) {
-                        console.error(err);
-                        console.error(completion);
-                        console.error(yamlMatches[1]);
-                        throw err;
+                        chatStore.completionErrorMessage =
+                            `The YAML did not validate, either correct the mistake or roll back the update! Here is the error message:\n\n${err.message}`
                     }
                 }
 
