@@ -26,7 +26,7 @@ ${schemaText}\`\`\`
 This initial YAML structure is available:
 
 \`\`\`
-${jsYaml.dump(currentObject, { indent: 1 })}\`\`\`
+${jsYaml.dump(currentObject)}\`\`\`
 
 Here are additional important instructions for you:
 

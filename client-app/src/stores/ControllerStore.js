@@ -5,6 +5,7 @@ import { useViewSharedStore } from '@/stores/ViewSharedStore'
 import { useObjectStateStore } from '@/stores/ObjectStateStore'
 import { GptHttp } from '@/helpers/GptHttp';
 import * as jsYaml from 'js-yaml';
+import { BackendHttp } from '../helpers/BackendHttp'
 
 export const useControllerStore = defineStore('controller', {
     state: () => {
@@ -14,9 +15,11 @@ export const useControllerStore = defineStore('controller', {
         const top_p = ref(parseFloat(import.meta.env.VITE_OPENAI_TOP_P))
         const version = ref(import.meta.env.VITE_OPENAI_MODEL_VERSION)
         const gptHttp = ref(new GptHttp(apiKey.value, orgId.value, version.value, temp.value, top_p.value))
+        const backendHttp = ref(new BackendHttp(import.meta.env.VITE_BACKEND_BASE))
 
         return {
             gptHttp,
+            backendHttp,
             apiKey,
             orgId,
             temp,
@@ -25,6 +28,19 @@ export const useControllerStore = defineStore('controller', {
         }
     },
     actions: {
+        async validate() {
+            const objectStateStore = useObjectStateStore()
+            let that = this
+
+            return this.backendHttp.validate(objectStateStore.currentObject).then(function (response) {
+                if (!response.data.success) {
+                    that.prompt(
+                        `The YAML did not validate, please correct the mistake or roll back the update!\n${response.data.msg}`)
+                }
+            }).catch(function (err) {
+                console.error(err);
+            });
+        },
         async prompt(newPrompt) {
             const viewSharedState = useViewSharedStore()
             const chatStore = useChatStore()
@@ -101,6 +117,13 @@ export const useControllerStore = defineStore('controller', {
             const viewSharedState = useViewSharedStore()
             const chatStore = useChatStore()
             const objectStateStore = useObjectStateStore()
+
+            await this.backendHttp.schemaAndEmpty().then(function (response) {
+                objectStateStore.schemaText = response.data.schema
+                objectStateStore.currentObject = response.data.empty
+            }).catch(function (err) {
+                console.error(err);
+            });
 
             let systemMessageText = chatStore.getSystemMessageText(
                 objectStateStore.schemaText,

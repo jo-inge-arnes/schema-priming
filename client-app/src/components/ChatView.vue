@@ -22,7 +22,8 @@ export default {
 
             if (msg.length > 0) {
                 viewSharedStore.disableInput = true;
-                await controllerStore.prompt(msg, 'user')
+                await controllerStore.prompt(msg)
+                await controllerStore.validate()
                 await nextTick()
             }
 

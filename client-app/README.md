@@ -4,7 +4,7 @@ Prototype VUE 3 client application. Its Vite development server can be run with
 `npm run dev`.
 
 Important! Make sure to create a create a file, `.env.local`, for your local
-settings with OpenAI key, organization, temperature, top-p, and GPT model version:
+settings with OpenAI key, organization, temperature, top-p, and GPT model version. Also, add the URL to the backend:
 
 ```
 VITE_OPENAI_ORG_ID=YOUR_ORG_ID
@@ -12,6 +12,7 @@ VITE_OPENAI_API_KEY=YOUR_KEY
 VITE_OPENAI_TEMP=0.05
 VITE_OPENAI_TOP_P=0.2
 VITE_OPENAI_MODEL_VERSION=gpt-4.0 # gpt-3.5-turbo
+VITE_BACKEND_BASE=http://127.0.0.1:5000
 ```
 
 # Other General Information
