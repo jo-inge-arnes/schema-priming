@@ -1,4 +1,4 @@
-# Prototype for priming LLMs with schemas for building valid data objects
+# Instructing LLMs to step-wise build valid data objects
 
 Prototype demonstrating the approach presented in the paper *Schema-Based Priming of Large Language Model for Data Object Validation
 Compliance*, which is currently [available as a preprint](https://).
